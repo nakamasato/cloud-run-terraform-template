@@ -29,12 +29,14 @@ variable "service_name" {
 
 variable "slack_bot_token" {
   description = "The Slack bot token"
+  default     = ""
   type        = string
   sensitive   = true
 }
 
 variable "slack_channel" {
   description = "The Slack channel to post messages to"
+  default     = ""
   type        = string
 }
 
