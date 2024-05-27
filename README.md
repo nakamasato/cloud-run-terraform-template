@@ -19,9 +19,10 @@ This module is a combination of other modules:
 - `image` - Docker image for Cloud Run service
 - `github_owner` - GitHub owner
 - `github_repository` - GitHub repository
+- `github_actions_sa_name` - GitHub Actions service account name (default: `github-actions`)
 - `gh_oidc_pool_id` - GitHub OIDC pool ID
 - `gh_oidc_provider_id` - GitHub OIDC provider ID
-- `github_actions_roles` - GitHub Actions roles`
+- `github_actions_roles` - GitHub Actions roles
 
 ### Optional
 
@@ -36,7 +37,6 @@ Cloud Run Slack Bot:
 Cloud Run Slack Bot option (audit log notification)
 
 - `enable_cloud_run_slack_bot_audit_log_notification` - Enable audit log notification for cloud-run-slack-bot (default: `false`)
-- `github_actions_sa_name` - GitHub Actions service account name (default: `github-actions`)
 
 ## Options
 
