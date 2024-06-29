@@ -39,6 +39,12 @@ module "cloud_run_slack_bot" {
 
   # Optional variables
   service_account_email = google_service_account.cloud_run_slack_bot[0].email
+  template_annotations  = {
+    "autoscaling.knative.dev/maxScale": 2,
+    "autoscaling.knative.dev/minScale": 0,
+    "generated-by": "terraform",
+    "run.googleapis.com/client-name": "terraform"
+  }
 }
 
 resource "google_service_account" "cloud_run_slack_bot" {
