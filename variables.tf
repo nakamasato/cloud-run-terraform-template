@@ -113,9 +113,9 @@ variable "github_actions_roles" {
   ]
 }
 
-variable "temlate_annotations" {
+variable "template_annotations" {
   description = "Cloud Run template annotations"
-  default     = {
+  default = {
     "autoscaling.knative.dev/maxScale" : 2,
     "autoscaling.knative.dev/minScale" : 0,
     "generated-by" : "terraform",
