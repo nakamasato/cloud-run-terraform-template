@@ -112,3 +112,13 @@ variable "github_actions_roles" {
     "roles/storage.objectUser",              # GitHub Actions needs write/read permission for GCS to manage terraform state file
   ]
 }
+
+variable "template_annotations" {
+  description = "Cloud Run template annotations"
+  default = {
+    "autoscaling.knative.dev/maxScale" : 2,
+    "autoscaling.knative.dev/minScale" : 0,
+    "generated-by" : "terraform",
+    "run.googleapis.com/client-name" : "terraform"
+  }
+}

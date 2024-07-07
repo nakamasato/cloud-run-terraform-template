@@ -11,6 +11,7 @@ module "cloud_run" {
 
   # Optional variables
   service_account_email = google_service_account.cloud_run.email
+  template_annotations  = var.template_annotations
 }
 
 resource "google_service_account" "cloud_run" {
