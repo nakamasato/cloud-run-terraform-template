@@ -1,17 +1,20 @@
-module "cloud_run" {
+resource "google_cloud_run_v2_service" "default" {
   for_each = toset(var.multi_regions)
-  source   = "GoogleCloudPlatform/cloud-run/google"
-  version  = "~> 0.10.0"
 
-  # Required variables
-  service_name = var.service_name
-  project_id   = var.project
-  location     = each.value
-  image        = var.image
+  name     = var.service_name
+  location = each.value
 
-  # Optional variables
-  service_account_email = google_service_account.cloud_run.email
-  template_annotations  = var.template_annotations
+  template {
+    containers {
+      image = var.image
+    }
+
+    service_account = google_service_account.cloud_run.email
+
+    annotations = var.template_annotations
+  }
+
+  project = var.project
 }
 
 resource "google_service_account" "cloud_run" {
