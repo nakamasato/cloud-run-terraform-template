@@ -1,52 +1,49 @@
 // Cloud Run for backend server for Slack app
-module "cloud_run_slack_bot" {
-  count   = var.create_cloud_run_slack_bot ? 1 : 0
-  source  = "GoogleCloudPlatform/cloud-run/google"
-  version = "~> 0.10.0"
-
-  # Required variables
-  service_name = var.cloud_run_slack_bot_service_name
-  project_id   = var.project
-  location     = var.region
-  image        = var.cloud_run_slack_bot_image
-
-  env_vars = [
-    {
-      name  = "PROJECT"
-      value = var.project
-    },
-    {
-      name  = "REGION"
-      value = var.region
-    },
-    {
-      name  = "SLACK_BOT_TOKEN"
-      value = var.slack_bot_token // TODO: enable to read from GSM
-    },
-    {
-      name  = "SLACK_CHANNEL"
-      value = var.slack_channel
-    },
-    {
-      name  = "SLACK_APP_MODE"
-      value = "http"
-    },
-    {
-      name  = "TMP_DIR"
-      value = "/tmp"
-    },
-  ]
-
-  # Optional variables
-  service_account_email = google_service_account.cloud_run_slack_bot[0].email
+locals {
+  cloud_run_slack_bot_env_vars = {
+    PROJECT         = var.project
+    REGION          = var.region
+    SLACK_BOT_TOKEN = var.slack_bot_token // TODO: enable to read from GSM
+    SLACK_APP_MODE  = "http"
+    SLACK_CHANNEL   = var.slack_channel
+    TMP_DIR         = "/tmp"
+  }
 }
+
+resource "google_cloud_run_v2_service" "cloud_run_slack_bot" {
+  count    = var.create_cloud_run_slack_bot ? 1 : 0
+  name     = "cloud-run-slack-bot"
+  location = var.region
+
+  template {
+    containers {
+      image = var.cloud_run_slack_bot_image
+
+      dynamic "env" {
+        for_each = local.cloud_run_slack_bot_env_vars
+        content {
+          name  = env.key
+          value = env.value
+        }
+      }
+    }
+    service_account = google_service_account.cloud_run_slack_bot[0].email
+  }
+
+  lifecycle {
+    ignore_changes = [
+      client,
+      client_version,
+    ]
+  }
+}
+
 
 resource "google_service_account" "cloud_run_slack_bot" {
   count        = var.create_cloud_run_slack_bot ? 1 : 0
   account_id   = "cloud-run-slack-bot"
   display_name = "cloud-run-slack-bot"
 }
-
 
 # Audit logging + Log Sink + PubSub
 # Audit loggs: Admin Activity audit logs are always written; you can't configure, exclude, or disable them. (enough) https://cloud.google.com/logging/docs/audit
@@ -104,7 +101,7 @@ resource "google_pubsub_subscription" "subscription" {
   name  = "pubsub_subscription"
   topic = google_pubsub_topic.cloud_run_audit_log[0].name
   push_config {
-    push_endpoint = "${module.cloud_run_slack_bot[0].service_url}/cloudrun/events" # defined in the cloud-run-slack-bot app
+    push_endpoint = "${google_cloud_run_v2_service.cloud_run_slack_bot[0].uri}/cloudrun/events" # defined in the cloud-run-slack-bot app
     oidc_token {
       service_account_email = google_service_account.sa[0].email
     }
