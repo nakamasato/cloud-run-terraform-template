@@ -2,7 +2,7 @@
 module "cloud_run_slack_bot" {
   count   = var.create_cloud_run_slack_bot ? 1 : 0
   source  = "GoogleCloudPlatform/cloud-run/google"
-  version = "~> 0.10.0"
+  version = "~> 0.17.0"
 
   # Required variables
   service_name = var.cloud_run_slack_bot_service_name
