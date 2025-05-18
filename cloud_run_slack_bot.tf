@@ -9,7 +9,9 @@ locals {
     TMP_DIR         = "/tmp"
   }
 }
+
 resource "google_cloud_run_v2_service" "cloud_run_slack_bot" {
+  count    = var.create_cloud_run_slack_bot ? 1 : 0
   name     = "cloud-run-slack-bot"
   location = var.region
 
