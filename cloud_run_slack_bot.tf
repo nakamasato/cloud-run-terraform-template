@@ -101,7 +101,7 @@ resource "google_pubsub_subscription" "subscription" {
   name  = "pubsub_subscription"
   topic = google_pubsub_topic.cloud_run_audit_log[0].name
   push_config {
-    push_endpoint = "${module.cloud_run_slack_bot[0].service_url}/cloudrun/events" # defined in the cloud-run-slack-bot app
+    push_endpoint = "${google_cloud_run_v2_service.cloud_run_slack_bot[0].service_url}/cloudrun/events" # defined in the cloud-run-slack-bot app
     oidc_token {
       service_account_email = google_service_account.sa[0].email
     }
